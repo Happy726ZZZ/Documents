@@ -1,0 +1,316 @@
+---
+swagger: "2.0"
+info:
+  description: "A Simple Blog"
+  version: "1.0.0"
+  title: "Swagger Blog"
+host: "blog.swagger.io"
+basePath: "/v2"
+tags:
+- name: "Article"
+- name: "User"
+schemes:
+- "https"
+- "http"
+paths:
+  /articles:
+    get:
+      tags:
+      - "Article"
+      summary: "Get articles"
+      description: ""
+      operationId: "GetArticles"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "page"
+        in: "query"
+        description: "the request page"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ArticlesResponse"
+        404:
+          description: "Not Found"
+          schema:
+            type: object
+            properties:
+              error: 
+                type: string
+                example:
+                - "User Not Exists"
+                - "Article Not Exists"
+  /article/{id}:
+    get:
+      tags:
+      - "Article"
+      summary: "Get article by id"
+      description: ""
+      operationId: "GetArticleById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The unique Id of the article"
+        required: true
+        type: "integer"
+        x-exportParamName: "Id"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Article"
+        400:
+          description: "Bad Request"
+          schema:
+            type: object
+            properties:
+              error: 
+                type: string
+                example:
+                - "Wrong ArticleId"
+        404:
+          description: "Not Found"
+          schema:
+            type: object
+            properties:
+              error: 
+                type: string
+                example:
+                - "Article Not Exists"
+  /article/{id}/comments:
+    get:
+      tags:
+      - "Article"
+      summary: "Get all comments of an article"
+      description: ""
+      operationId: "GetCommentsOfArticle"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The unique id of the article to return"
+        required: true
+        type: "integer"
+        x-exportParamName: "Id"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Comments"
+        400:
+          description: "Bad Request"
+          schema:
+            type: object
+            properties:
+              error: 
+                type: string
+                example:
+                - "Wrong ArticleId"
+        404:
+          description: "Not Found"
+          schema:
+            type: object
+            properties:
+              error: 
+                type: string
+                example:
+                - "Article Not Exists"
+                - "Comment Not Exists"
+  /auth/signup:
+    post:
+      tags:
+      - "User"
+      summary: "sign up"
+      description: "Create a new user with the unique username"
+      operationId: "SignUp"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+        x-exportParamName: "Body"
+      responses:
+        200:
+          description: OK
+        400:
+          description: "Bad Requested"
+          schema:
+            type: object
+            properties:
+              error: 
+                type: string
+                example:
+                - "User Exists"
+                - "Wrong Username or Password"
+                - "..."
+  /auth/signin:
+    post:
+      tags:
+      - "User"
+      summary: "sign in"
+      description: "Check user with username and password"
+      operationId: "SignIn"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:          
+          $ref: "#/definitions/User"
+      responses:
+        200:
+          description: "Successful Operation"
+          schema:
+            type: object
+            properties:
+              token: 
+                type: string
+        404:
+          description: "Not Found"
+          schema:
+            type: object
+            properties:
+              error: 
+                type: string
+                example: "Wrong Username or Password"
+
+  /article/{id}/comment:
+    post:
+      tags:
+      - "User"
+      summary: "create comment"
+      description: "user creates a comment for the article"
+      operationId: "CreateComment"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "integer"
+        x-exportParamName: "Id"
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          type: object
+          properties:
+            content:
+              type: string
+            author:
+              type: string
+      responses:
+        200:
+          description: "Successful Operation"
+          schema:
+            $ref: "#/definitions/Comment"
+        400:
+          description: "Bad Request"
+          schema:
+            type: object
+            properties:
+              error: 
+                type: string
+                example:
+                - "Article Not Exists"
+                - "Wrong ArticleId"
+                - "There is no content in your article"
+                - "..."
+definitions:
+  User:
+    type: "object"
+    required:
+    - "password"
+    - "username"
+    properties:
+      username:
+        type: "string"
+      password:
+        type: "string"
+    example:
+      password: "password"
+      username: "username"
+  Tag:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+    example:
+      name: "name"
+  Article:
+    type: "object"
+    required:
+    - "author"
+    - "content"
+    - "id"
+    - "name"
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      tags:
+        type: "array"
+        items:
+          $ref: "#/definitions/Tag"
+      date:
+        type: "string"
+      content:
+        type: "string"
+    example:
+      date: "date"
+      author: "author"
+      name: "name"
+      id: 0
+      content: "content"
+      tags:
+      - name: "name"
+      - name: "name"
+  Comment:
+    type: "object"
+    required:
+    - "articleId"
+    - "author"
+    - "content"
+    - "date"
+    properties:
+      date:
+        type: "string"
+      content:
+        type: "string"
+      author:
+        type: "string"
+      articleId:
+        type: "integer"
+    example:
+      date: "date"
+      author: "author"
+      articleId: 0
+      content: "content"
+  Comments :
+    properties:
+      contents:
+        type: "array"
+        items:
+          $ref: '#/definitions/Comment'
+  ArticleResponse:
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+  ArticlesResponse:
+    properties:
+      Articles:
+        type: "array"
+        items:
+          $ref: "#/definitions/ArticleResponse"
