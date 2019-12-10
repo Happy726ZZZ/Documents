@@ -212,3 +212,19 @@ boltdbs生成的.db文件可以通过boltbrowser查看
 - 在具体发送http请求时修改url即可
 
 后来发现是因为cookie的原因后端判断origin的时候出现问题.
+
+## 运行效果截图
+
+### 注册登录页面
+
+![img](img/Z1}RJE0RZ_$I_ON0QBAOY0.png)
+
+![img](img/1XM]]}F198{C0$8UI%3GC1E.png)
+
+### 博客列表页面
+
+![img](img/%6HCM6{VEKCAAR]V8G18]R.png)
+
+### 博客详情页面
+
+![img](img/7N[E7[8BBXBE]UZ3NHP`8.png)
